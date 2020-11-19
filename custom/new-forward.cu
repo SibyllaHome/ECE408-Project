@@ -3,6 +3,8 @@
 #include "gpu-new-forward.h"
 #define TILE_WIDTH 16
 
+//__constant__ float mc[12000];
+
 __global__ void conv_forward_kernel(float *y, const float *x, const float *k, const int B, const int M, const int C, const int H, const int W, const int K)
 {
     /*
@@ -86,6 +88,7 @@ __host__ void GPUInterface::conv_forward_gpu(float *host_y, const float *host_x,
 
     cudaMemcpy(device_x, host_x, inputLen * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(device_k, host_k, kernelLen * sizeof(float), cudaMemcpyHostToDevice);
+    //cudaMemcpyToSymbol(mc, host_k, kernelLen * sizeof(float));
 
     // Set the kernel dimensions and call the kernel
     dim3 gridDim(ceil(float(W_out)/TILE_WIDTH), ceil(float(H_out)/TILE_WIDTH), M);
